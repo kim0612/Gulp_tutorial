@@ -1,0 +1,7 @@
+{
+  "name": "supergulp",
+  "version": "1.0.0",
+  "description": "sexy cool gulp.js",
+  "main": "index.js",
+  "license": "MIT"
+}
