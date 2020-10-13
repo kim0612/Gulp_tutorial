@@ -4,6 +4,8 @@ import del from "del";
 import Gws from "gulp-webserver";
 import Gimg from "gulp-image";
 import Gsass from "gulp-sass";
+import Gautoprefixer from "gulp-autoprefixer";
+import Gcsso from "gulp-csso";
 
 Gsass.compiler = require('node-sass');
 
@@ -23,7 +25,7 @@ const routes = {
   scss : {
     src : './src/scss/style.scss',
     dest : './build/css',
-    watch : './src/scss/style.scss'
+    watch : './src/scss/*.scss'
   }
 };
 
@@ -46,6 +48,8 @@ const task_scss = () =>
   gulp
     .src(routes.scss.src)
     .pipe(Gsass().on('error', Gsass.logError))
+    .pipe(Gautoprefixer({cascade: false, overrideBrowserslist:["last 2 versions"]}))
+    .pipe(Gcsso())
     .pipe(dest(routes.scss.dest));
     
 const task_webserver = () => 
