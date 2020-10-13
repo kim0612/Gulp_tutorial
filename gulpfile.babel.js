@@ -6,6 +6,8 @@ import Gimg from "gulp-image";
 import Gsass from "gulp-sass";
 import Gautoprefixer from "gulp-autoprefixer";
 import Gcsso from "gulp-csso";
+import Gbro from "gulp-bro";
+import babelify from "babelify";
 
 Gsass.compiler = require('node-sass');
 
@@ -26,6 +28,11 @@ const routes = {
     src : './src/scss/style.scss',
     dest : './build/css',
     watch : './src/scss/*.scss'
+  },
+  js : {
+    src : './src/js/main.js',
+    dest : './build/js',
+    watch : './src/js/**/*.js'
   }
 };
 
@@ -52,6 +59,17 @@ const task_scss = () =>
     .pipe(Gcsso())
     .pipe(dest(routes.scss.dest));
     
+const task_js = () =>
+  gulp
+    .src(routes.js.src)
+    .pipe(Gbro({
+      transform: [
+        babelify.configure({ presets: ['@babel/preset-env'] }),
+        [ 'uglifyify', { global: true } ]
+      ]
+    }))
+    .pipe(dest(routes.js.dest));
+
 const task_webserver = () => 
   gulp
     .src(routes.webserver)
@@ -60,10 +78,10 @@ const task_webserver = () =>
 const task_watch = () => 
   gulp.watch(routes.pug.watch, task_pug);
   gulp.watch(routes.scss.watch, task_scss);
-
+  gulp.watch(routes.js.watch, task_js);
 
 const prepare = gulp.series([task_del]);
-const assets = gulp.series([task_pug, task_image, task_scss]);
+const assets = gulp.series([task_pug, task_image, task_scss, task_js]);
 const postDev = gulp.parallel([task_webserver,task_watch]);
 
 
